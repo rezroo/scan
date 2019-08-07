@@ -48,7 +48,7 @@ docker run -it --net host --pid host --userns host --cap-add audit_control \
     -v ${ResDir}:/scan/results \
     --label docker_bench_security \
     --name ${CNAME} \
-    rezroo/security-scan:${ImgTag} -dm $@
+    rezroo/security-scan:${ImgTag} -dmn $@
 
 docker logs --details ${CNAME} > ${ResDir}/${hn}-scan.out
 

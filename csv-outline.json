@@ -1,0 +1,21 @@
+{
+  "collection": "results",
+  "map": [
+    [
+      "Description",
+      "desc"
+    ],
+    [
+      "ID",
+      "id"
+    ],
+    [
+      "Result",
+      "result"
+    ],
+    [
+      "Details",
+      "details"
+    ]
+  ]
+}

@@ -5,6 +5,8 @@ else
    SDir=$1
 fi
 
+ResDir=dbg-scan
+
 docker run -dt --net host --pid host --userns host --cap-add audit_control \
     -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
     -e TESTUID=$(id -u) -e TESTGID=$(id -g) \
@@ -14,6 +16,7 @@ docker run -dt --net host --pid host --userns host --cap-add audit_control \
     -v /usr/lib/systemd:/usr/lib/systemd:ro \
     -v /var/lib:/var/lib:ro \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
+    -v ${ResDir}:/scan/results \
     -v ${SDir}:/root/src \
     --label docker_bench_security \
     --name dbg-sec-scan \

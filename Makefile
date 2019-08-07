@@ -21,6 +21,7 @@ $(App): docker-bench-security.git json2csv.git jsondiff.git
 	docker build $(OPTS) \
     --build-arg  DBSDIR=docker-bench-security.git  \
     --build-arg  JSONDIFF=jsondiff.git  \
+    --build-arg  JSON2CSV=json2csv.git  \
     --build-arg  OPENSCAP=mirantis-xccdf-benchmarksxccdf-benchmarks  \
     -t $(DUser)/$(App):$(AppVersion) -f Dockerfile .
 

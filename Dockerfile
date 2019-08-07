@@ -32,6 +32,9 @@ COPY $DBSDIR docker-bench-security
 ARG JSONDIFF
 COPY $JSONDIFF jsondiff
 
+ARG JSON2CSV
+COPY $JSON2CSV json2csv
+
 ARG OPENSCAP
 COPY $OPENSCAP/scap-content openscap
 RUN mkdir -p openscap/results
@@ -39,6 +42,7 @@ COPY $OPENSCAP/scap-content/mirantis/cpe /usr/share/openscap/cpe
 
 COPY run-cis-scan.sh docker-bench-security/
 COPY run-docker-diff.sh jsondiff/
+COPY csv-outline.json csv-docker-json.sh json2csv/
 COPY run-k8s-scan.sh openscap/
 COPY run-scan.sh .
 
