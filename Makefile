@@ -41,4 +41,7 @@ runquickcompare:
 runquicktest:
 	./run-docker-scan.sh -R testscan -l /scan/results/docker/testscan.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
 
-
+rundebugsession:
+	docker rm -f dbg-sec-scan | true
+	./dbg-sec-scan.sh
+	docker exec -it dbg-sec-scan bash
