@@ -1,0 +1,8 @@
+*.git
+.*.swp
+*.so
+*.log
+*.tgz
+
+# PyCharm
+.idea

@@ -49,22 +49,29 @@ if [ ! -z ${oindex+x} ]; then
     shift $oindex
 fi
 
+DBSArgs=$@
+if [ -z ${logfile+x} ]; then
+  logfile=/scan/results/docker/$HOSTNAME.log
+  DBSArgs="-l $logfile $DBSArgs"
+fi
+
+
 if [ ! -z ${DockerBench+x} ]; then
   mkdir /scan/results/docker
   cd /scan/docker-bench-security
 # ./run-cis-scan.sh -l /scan/results/docker/${HOSTNAME}.log
 #    -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
-  ./run-cis-scan.sh $@
+  ./run-cis-scan.sh $DBSArgs
 fi
 
 if [ ! -z ${DockerCompare+x} ]; then
   cd /scan/jsondiff
-  ./run-docker-diff.sh /scan/results/host /scan/results/docker $HOSTNAME | tee /scan/results/diff-${HOSTNAME}-docker.json
+  ./run-docker-diff.sh $logfile /scan/results/host | tee /scan/results/diff-${HOSTNAME}-docker.json
 fi
 
 if [ ! -z ${DockerCSV+x} ]; then
   cd /scan/json2csv
-  ./csv-docker-json.sh /scan/results/docker $HOSTNAME
+  ./csv-docker-json.sh $logfile
 fi
 
 chown -R ${TESTUID}:${TESTGID} /scan/results

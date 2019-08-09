@@ -1,8 +1,8 @@
 CWD=/scan/results
 cd /scan/jsondiff
-ScanDir1=${1}
+ScanDir1=$(dirname ${1})
 ScanDir2=${2}
-ScanFile=${3}.log.json
+ScanFile=$(filename ${1})
 #set -x
 echo "["
 echo "\"" "python -m jsondiff.cli ${ScanDir1}/${ScanFile} ${ScanDir2}/${ScanFile}" "\","
