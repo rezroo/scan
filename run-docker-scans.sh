@@ -2,6 +2,8 @@
 
 #This script will run the docker-bench-security twice, once as a bash script and then as a container
 #Results are saved in all-scan-resultz.tgz
+#The reason for saving results under a directory named as hostname is to allow combining all the scans
+#from all the hosts by just copying them into one directory without having to jump through hoops
 
 cwd=$(pwd)
 hn=$(hostname -s)
@@ -22,7 +24,7 @@ cd ${dn}
 ./docker-bench-security.sh -l ${hostlogdir}/${hn}.log $ARGS
 cd ..
 
-./run-docker-scan.sh -R $hn -T debian -l /scan/results/docker/${hn}.log $ARGS
+./run-docker-scan.sh -R $hn -dm -l /scan/results/docker/${hn}.log $ARGS
 
 tar zcvf ${hn}-scan-resultz.tgz ${hn}
 #rm -rf ${dn}

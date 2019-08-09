@@ -25,11 +25,11 @@ $(App): docker-bench-security.git json2csv.git jsondiff.git
     --build-arg  OPENSCAP=mirantis-xccdf-benchmarksxccdf-benchmarks  \
     -t $(DUser)/$(App):$(AppVersion) -f Dockerfile .
 
-#$(App).git:
-#	@if [ ! -d  $@ ]; then (git clone $(RepoBranch) $(AppRepo) $@); fi
-
 runscan:
-	./$(App).git/run-docker-scans.sh
+	./run-docker-scans.sh
+
+runquickscan:
+	./run-docker-scans.sh -c host_configuration,docker_daemon_configuration
 
 #	./$(App).git/run-docker-scan.sh -R $(Host) -l $(Host).log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
 
@@ -38,6 +38,6 @@ $(Anal): json2csv.git jsondiff.git
 #	cd $(App).git; docker build $(OPTS) -t $(DUser)/$(App):$(AppVersion) -f distros/Dockerfile.$(AppVersion) .
 
 runanal:
-	cd $(App).git; ./run-docker-scan.sh
+	./run-docker-scan.sh
 
 

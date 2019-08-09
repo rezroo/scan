@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 #docker build --no-cache -t rezroo/docker-bench-security:1.0 .
 
-while getopts ":R:T:" opt; do
+while getopts ":R:T:dmn" opt; do
     case "${opt}" in
         R)
             ResDir=$(pwd)/${OPTARG}
@@ -10,6 +10,10 @@ while getopts ":R:T:" opt; do
         T)
             ImgTag=${OPTARG}
             oindex=$((OPTIND-1))
+            ;;
+        [dmn]) # if caller provides command options then don't add
+               # default running option of -dn
+            HasOptions=1
             ;;
         :)
             echo "Option $opt and -$OPTARG requires an argument." >&2
@@ -34,6 +38,10 @@ if [ -z ${ImgTag+x} ]; then
    ImgTag=debian
 fi
 
+if [ -z ${HasOptions+x} ]; then
+   CMDArgs="-dn"
+fi
+
 CNAME=security-scan.${hn}
 
 docker run -it --net host --pid host --userns host --cap-add audit_control \
@@ -48,7 +56,7 @@ docker run -it --net host --pid host --userns host --cap-add audit_control \
     -v ${ResDir}:/scan/results \
     --label docker_bench_security \
     --name ${CNAME} \
-    rezroo/security-scan:${ImgTag} -dmn $@
+    rezroo/security-scan:${ImgTag} $CMDArgs $@
 
 docker logs --details ${CNAME} > ${ResDir}/${hn}-scan.out
 
