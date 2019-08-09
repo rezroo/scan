@@ -16,6 +16,7 @@ Anal=docker-bench-analysis
 %.git :
 	if [ ! -d  $@ ]; then (git clone $(RepoBranch) $(AppRepo)/$@ $@); fi
 
+# build the container image
 $(App): docker-bench-security.git json2csv.git jsondiff.git
 	#cd $(App).git; git pull
 	docker build $(OPTS) \
@@ -25,19 +26,19 @@ $(App): docker-bench-security.git json2csv.git jsondiff.git
     --build-arg  OPENSCAP=mirantis-xccdf-benchmarksxccdf-benchmarks  \
     -t $(DUser)/$(App):$(AppVersion) -f Dockerfile .
 
+# comapre host docker-bench-security with the containerized version
 runscan:
 	./run-docker-scans.sh
 
-runquickscan:
+# test the scripts running host docker-bench-security with the containerized version
+runquickcompare:
 	./run-docker-scans.sh -c host_configuration,docker_daemon_configuration
 
-#	./$(App).git/run-docker-scan.sh -R $(Host) -l $(Host).log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
+#	./run-docker-scan.sh -R $(Host) -l $(Host).log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
 
 
-$(Anal): json2csv.git jsondiff.git
-#	cd $(App).git; docker build $(OPTS) -t $(DUser)/$(App):$(AppVersion) -f distros/Dockerfile.$(AppVersion) .
-
-runanal:
-	./run-docker-scan.sh
+# test the scripts to do a docker scan and generate csv files from the json
+runquicktest:
+	./run-docker-scan.sh -R testscan -l /scan/results/docker/testscan.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
 
 

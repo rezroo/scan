@@ -8,3 +8,11 @@ For these two reasons making an image that does all the scans and analysis.
 
 The containerized docker-bench works better than the shell-script on the host now - but as the underlying NC changes, new issues may show up.
 So would should run the compare script prior to each quarterly scan to make sure it's always working as good as or better than the shell script on the host.
+
+The scripts in this directory are either executed on the host, or in the container. The scripts on the host should assume minimal packages.
+So sh or bash scripts are fine, but we don't want to assume that python is installed. The scripts on the container can use anything, but in
+the long run we want to optimize for as few processes as possible, and possibility of using other images. So sh and python are fine, but
+avoiding bash is for example a good idea because it's not there on alpine based images.
+
+The purpose of Makefile is to document various useful command - sort of an executable README. It doesn't have to be perfect and build everything.
+It's more of a documentation tool than anything else.
