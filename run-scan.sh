@@ -19,7 +19,7 @@ docker version
 # -k : run k8s openscap scan
 # -u : run ubuntu openscap scan
 # -x : generate json from k8s xccdf files
-while getopts ":dmnkl:" opt; do
+while getopts ":dmnkxl:" opt; do
   case "${opt}" in
     d)
       DockerBench=1
@@ -35,6 +35,10 @@ while getopts ":dmnkl:" opt; do
       ;;
     k)
       K8SSCAN=1
+      oindex=$((OPTIND-1))
+      ;;
+    x)
+      K8S2JSON=1
       oindex=$((OPTIND-1))
       ;;
     l)
@@ -81,6 +85,11 @@ fi
 if [ ! -z ${K8SSCAN+x} ]; then
   cd /scan/openscap
   ./run-k8s-scan.sh $(dirname $(dirname $logfile))/k8s
+fi
+
+if [ ! -z ${K8S2JSON+x} ]; then
+  cd /scan/xmlutils.py
+  ./xccdf2json.sh $(dirname $(dirname $logfile))/k8s
 fi
 
 chown -R ${TESTUID}:${TESTGID} /scan/results

@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 #docker build --no-cache -t rezroo/docker-bench-security:1.0 .
 
-while getopts ":R:T:dmnk" opt; do
+while getopts ":R:T:dmnkx" opt; do
     case "${opt}" in
         R)
             ResDir=$(pwd)/${OPTARG}
@@ -11,7 +11,7 @@ while getopts ":R:T:dmnk" opt; do
             ImgTag=${OPTARG}
             oindex=$((OPTIND-1))
             ;;
-        [dmnk]) # if caller provides command options then don't add
+        [dmnkx]) # if caller provides command options then don't add
                # default running option of -dn
             HasOptions=1
             ;;

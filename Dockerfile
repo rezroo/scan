@@ -19,34 +19,37 @@ RUN \
 #   rm -rf /var/lib/apt/lists/* \
 #     /usr/share/doc /usr/share/doc-base \
 #     /usr/share/man /usr/share/locale /usr/share/zoneinfo
+#   apt install --yes phython-pip && \
 
-#   apt-get install -y wget && \
-#   apt-get install -y curl && \
+RUN \
+   apt-get install -y wget && \
+   apt-get install -y curl
+
+RUN \
+   curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \
+   python get-pip.py && \
+   pip install lxml
 
 RUN mkdir /scan
 WORKDIR /scan
 
 ARG DBSDIR
-COPY $DBSDIR docker-bench-security
+COPY run-cis-scan.sh $DBSDIR docker-bench-security/
 
 ARG JSONDIFF
-COPY $JSONDIFF jsondiff
+COPY run-docker-diff.sh $JSONDIFF jsondiff/
 
 ARG JSON2CSV
-COPY $JSON2CSV json2csv
+COPY csv-outline.json csv-docker-json.sh $JSON2CSV json2csv/
 
 ARG OPENSCAP
-COPY $OPENSCAP/scap-content openscap
-RUN mkdir -p openscap/results
+COPY run-k8s-scan.sh $OPENSCAP/scap-content openscap/
+#RUN mkdir -p openscap/results
 COPY $OPENSCAP/scap-content/mirantis/cpe /usr/share/openscap/cpe
 
 ARG XCCDF2JSON
-COPY $XCCDF2JSON xmlutils.py
+COPY xccdf2json.sh $XCCDF2JSON xmlutils.py/
 
-COPY run-cis-scan.sh docker-bench-security/
-COPY run-docker-diff.sh jsondiff/
-COPY csv-outline.json csv-docker-json.sh json2csv/
-COPY run-k8s-scan.sh openscap/
 COPY run-scan.sh .
 
 ENTRYPOINT ["/scan/run-scan.sh"]

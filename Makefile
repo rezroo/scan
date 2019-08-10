@@ -50,6 +50,9 @@ rundebugsession:
 runk8sscan:
 	./run-docker-scan.sh -R testscan -k -l /scan/results/docker/${Host}.log
 
+makek8sjson:
+	./run-docker-scan.sh -R testscan -kx -l /scan/results/docker/${Host}.log
+
 runallscans:
-	./run-docker-scan.sh -R testscan -dnk -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
+	./run-docker-scan.sh -R testscan -dnkx -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
 
