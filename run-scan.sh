@@ -19,7 +19,7 @@ docker version
 # -k : run k8s openscap scan
 # -u : run ubuntu openscap scan
 # -x : generate json from k8s xccdf files
-while getopts ":dmnl:" opt; do
+while getopts ":dmnkl:" opt; do
   case "${opt}" in
     d)
       DockerBench=1
@@ -31,6 +31,10 @@ while getopts ":dmnl:" opt; do
       ;;
     n)
       DockerCSV=1
+      oindex=$((OPTIND-1))
+      ;;
+    k)
+      K8SSCAN=1
       oindex=$((OPTIND-1))
       ;;
     l)
@@ -72,6 +76,11 @@ fi
 if [ ! -z ${DockerCSV+x} ]; then
   cd /scan/json2csv
   ./csv-docker-json.sh $logfile
+fi
+
+if [ ! -z ${K8SSCAN+x} ]; then
+  cd /scan/openscap
+  ./run-k8s-scan.sh $(dirname $(dirname $logfile))/k8s
 fi
 
 chown -R ${TESTUID}:${TESTGID} /scan/results

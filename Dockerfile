@@ -40,6 +40,9 @@ COPY $OPENSCAP/scap-content openscap
 RUN mkdir -p openscap/results
 COPY $OPENSCAP/scap-content/mirantis/cpe /usr/share/openscap/cpe
 
+ARG XCCDF2JSON
+COPY $XCCDF2JSON xmlutils.py
+
 COPY run-cis-scan.sh docker-bench-security/
 COPY run-docker-diff.sh jsondiff/
 COPY csv-outline.json csv-docker-json.sh json2csv/
