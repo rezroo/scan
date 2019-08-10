@@ -42,11 +42,19 @@ if [ -z ${HasOptions+x} ]; then
    CMDArgs="-dn"
 fi
 
+if [ -z "${SUDO_UID}" ]; then
+   TESTUID=$(id -u)
+   TESTGID=$(id -g)
+else
+   TESTUID=$SUDO_UID
+   TESTGID=$SUDO_GID
+fi
+
 CNAME=security-scan.${hn}
 
 docker run -it --net host --pid host --userns host --cap-add audit_control \
     -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
-    -e TESTUID=$(id -u) -e TESTGID=$(id -g) \
+    -e TESTUID=$TESTUID -e TESTGID=$TESTGID \
     -v /etc:/etc:ro \
     -v /usr/bin/docker-containerd:/usr/bin/docker-containerd:ro \
     -v /usr/bin/docker-runc:/usr/bin/docker-runc:ro \
