@@ -35,9 +35,6 @@ runscan:
 runquickcompare:
 	./run-docker-scans.sh -c host_configuration,docker_daemon_configuration
 
-#	./run-docker-scan.sh -R $(Host) -l $(Host).log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
-
-
 # test the scripts to do a docker scan and generate csv files from the json
 runquicktest:
 	./run-docker-scan.sh -R testscan -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
@@ -53,6 +50,7 @@ runk8sscan:
 makek8sjson:
 	./run-docker-scan.sh -R testscan -kx -l /scan/results/docker/${Host}.log
 
+# run the complete scan
 runallscans:
-	./run-docker-scan.sh -R testscan -dnkx -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
+	./run-docker-scan.sh -R $(Host) -dnkx -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations
 
