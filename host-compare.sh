@@ -12,6 +12,7 @@ Results are saved in all-scan-resultz.tgz
 
 options:
   -d: Run docker bench scan in host and container.
+  -c: Quick docker scan
   -k: Run kubernetes scan
   -i: Install oscap on host (if it is not already installed)
 EOF
@@ -20,10 +21,15 @@ EOF
 
 HOOK_PREFIX="_run_"
 RUN_FUNCS=("init")
+declare -A FUNC_ARGS
 
-while getopts ":dki" opt; do
+while getopts ":dkic" opt; do
   hasopts=1
   case "${opt}" in
+    c)
+      FUNC_ARGS["docker_bench_scan"]="-c host_configuration,docker_daemon_configuration"
+      RUN_FUNCS+=("docker_bench_scan")
+      ;;
     d)
       RUN_FUNCS+=("docker_bench_scan")
       ;;
@@ -115,7 +121,15 @@ function _run_tar() {
 
 RUN_FUNCS+=('tar')
 
+# TODO: put this in a framework file
 # Run hooks
+declare -A FUNC_STACK
 for func in ${RUN_FUNCS[*]}; do
-  $HOOK_PREFIX$func
+  if [ ${FUNC_STACK[$func]+_} ]; then
+    continue;
+  fi
+
+  $HOOK_PREFIX$func ${FUNC_ARGS[$func]}
+
+  FUNC_STACK["${func}"]=1
 done;

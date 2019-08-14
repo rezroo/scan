@@ -33,7 +33,7 @@ runscan:
 
 # test the scripts running host docker-bench-security with the containerized version
 runquickcompare:
-	./run-docker-scans.sh -c host_configuration,docker_daemon_configuration
+	./host-compare.sh -c
 
 # test the scripts to do a docker scan and generate csv files from the json
 runquicktest:
