@@ -29,7 +29,7 @@ $(App): docker-bench-security.git json2csv.git jsondiff.git xmlutils.py.git
 
 # comapre host docker-bench-security with the containerized version
 runscan:
-	./run-docker-scans.sh
+	./host-compare.sh -d
 
 # test the scripts running host docker-bench-security with the containerized version
 runquickcompare:

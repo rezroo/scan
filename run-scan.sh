@@ -19,7 +19,7 @@ docker version
 # -k : run k8s openscap scan
 # -u : run ubuntu openscap scan
 # -x : generate json from k8s xccdf files
-while getopts ":dmnkxl:" opt; do
+while getopts ":dmbnkxl:" opt; do
   case "${opt}" in
     d)
       DockerBench=1
@@ -27,6 +27,10 @@ while getopts ":dmnkxl:" opt; do
       ;;
     m)
       DockerCompare=1
+      oindex=$((OPTIND-1))
+      ;;
+    b)
+      KubeCompare=1
       oindex=$((OPTIND-1))
       ;;
     n)
@@ -90,6 +94,17 @@ fi
 if [ ! -z ${K8S2JSON+x} ]; then
   cd /scan/xmlutils.py
   ./xccdf2json.sh $(dirname $(dirname $logfile))/k8s
+fi
+
+#TODO: Turn these into hooks and put paths in a common source file
+if [ ! -z ${KubeCompare+x} ]; then
+  # first convert host output to json
+  cd /scan/xmlutils.py
+  ./xccdf2json.sh /scan/results/host/k8s
+
+  # Perform diff
+  cd /scan/jsondiff
+  ./run-docker-diff.sh $logfile /scan/results/host/k8s | tee /scan/results/diff-${HOSTNAME}-k8s.json
 fi
 
 chown -R ${TESTUID}:${TESTGID} /scan/results
