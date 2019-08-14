@@ -5,6 +5,7 @@
 #The reason for saving results under a directory named as hostname is to allow combining all the scans
 #from all the hosts by just copying them into one directory without having to jump through hoops
 
+
 function usage() {
   cat <<EOF
 This script will run one or more of our scans twice, once as a bash script and then as a container
@@ -19,27 +20,31 @@ EOF
   exit 1
 }
 
-HOOK_PREFIX="_run_"
-RUN_FUNCS=("init")
-declare -A FUNC_ARGS
+
+source ./bash_utils/hook.sh
+
+# only these hooks will run in this order
+hook_order init install_oscap k8s_scan docker_bench_scan tar
+# they must first be enabled though
+enable_hooks init tar
+
 
 while getopts ":dkic" opt; do
   hasopts=1
   case "${opt}" in
     c)
-      FUNC_ARGS["docker_bench_scan"]="-c host_configuration,docker_daemon_configuration"
-      RUN_FUNCS+=("docker_bench_scan")
+      set_hook "docker_bench_scan" -c host_configuration,docker_daemon_configuration
       ;;
     d)
-      RUN_FUNCS+=("docker_bench_scan")
+      set_hook "docker_bench_scan"
       ;;
     k)
       #TODO check if oscap is installed and add a flag
       # which can toggle whether or not to install it
-      RUN_FUNCS+=("k8s_scan")
+      set_hook "k8s_scan"
       ;;
     i)
-      RUN_FUNCS+=("install_oscap")
+      set_hook "install_oscap"
       ;;
     *)
       usage
@@ -70,13 +75,11 @@ function _run_init() {
 }
 
 
-#XXX not used yet. Here JIC
 function _run_install_oscap() {
-  if [ ! -e "${HOST_CPE_FILE}" ]; then
-    sudo apt-get install --yes libopenscap8 &&\
-      sudo cp -av $XCCDF_REPO/mirantis/cpe/* /usr/share/openscap/cpe
-  else
-    echo "oscap already installed"
+  sudo apt-get install --yes libopenscap8
+  if [ $? != 0 ]; then
+    echo "Could not install oscap"
+    exit 1
   fi
 }
 
@@ -119,17 +122,4 @@ function _run_tar() {
     tar zcvf ${HN}-scan-resultz.tgz ${HN} >/dev/null 2>&1
 }
 
-RUN_FUNCS+=('tar')
-
-# TODO: put this in a framework file
-# Run hooks
-declare -A FUNC_STACK
-for func in ${RUN_FUNCS[*]}; do
-  if [ ${FUNC_STACK[$func]+_} ]; then
-    continue;
-  fi
-
-  $HOOK_PREFIX$func ${FUNC_ARGS[$func]}
-
-  FUNC_STACK["${func}"]=1
-done;
+run_hooks
