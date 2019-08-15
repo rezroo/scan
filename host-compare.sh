@@ -66,6 +66,16 @@ DOCKER_BENCH_REPO="${CWD}/docker-bench-security.git"
 XCCDF_REPO="${CWD}/xccdf-benchmarks/scap-content/"
 HOST_CPE_FILE="/usr/share/openscap/cpe/openscap-cpe-dict.xml"
 
+
+function fail_if_error() {
+  res=$1
+  description=$2
+  if [ $res != 0 ]; then
+    echo "Failed to run ${description}" >&2
+    exit 1
+  fi
+}
+
 # first set up host directories
 function _run_init() {
   mkdir -p ${HOST_LOG_DIR}
@@ -77,15 +87,11 @@ function _run_init() {
 
 function _run_install_oscap() {
   sudo apt-get install --yes libopenscap8
-  if [ $? != 0 ]; then
-    echo "Could not install oscap"
-    exit 1
-  fi
+  fail_if_error $? "oscap installation"
 }
 
 
 function _run_docker_bench_scan() {
-  #TODO allow this to be passed in from host-compare.sh
   if [ -z "$1" ]; then
     ARGS="-c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations"
   else
@@ -95,11 +101,15 @@ function _run_docker_bench_scan() {
   # host scan
   cd ${DOCKER_BENCH_REPO}
   ./docker-bench-security.sh -l ${HOST_LOG_DIR}/${HN}.log $ARGS
+  res=$?
   cd -
+
+  fail_if_error $res "docker host scan"
 
   # container scan while passing along the '-m' flag to perform diff
   ./run-docker-scan.sh -R $HN -dm -l /scan/results/docker/${HN}.log $ARGS
 
+  fail_if_error $? "docker container scan"
 }
 
 
@@ -110,11 +120,14 @@ function _run_k8s_scan() {
   # Ensure HOSTNAME is set for the k8s scan
   export HOSTNAME=${HN}
   ${CWD}/container_utils/run-k8s-scan.sh ${HOST_K8S_DIR}
-  res=$@
+  res=$?
   cd -
+
+  fail_if_error $res "k8s host scan"
 
   # run container stuff
  ./run-docker-scan.sh -R $HN -kxb -l /scan/results/k8s/${HOSTNAME}.xml
+  fail_if_error $? "k8s container scan"
 }
 
 
