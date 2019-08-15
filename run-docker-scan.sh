@@ -52,6 +52,7 @@ fi
 
 CNAME=security-scan.${hn}
 
+# TODO: make this `docker run` a function which can be used to also launch the debug process
 docker run -it --net host --pid host --userns host --cap-add audit_control \
     -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
     -e TESTUID=$TESTUID -e TESTGID=$TESTGID \

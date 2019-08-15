@@ -109,7 +109,7 @@ function _run_k8s_scan() {
   cd ${XCCDF_REPO}
   # Ensure HOSTNAME is set for the k8s scan
   export HOSTNAME=${HN}
-  ${CWD}/run-k8s-scan.sh ${HOST_K8S_DIR}
+  ${CWD}/container_utils/run-k8s-scan.sh ${HOST_K8S_DIR}
   res=$@
   cd -
 

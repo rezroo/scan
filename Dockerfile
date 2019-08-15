@@ -37,23 +37,23 @@ RUN mkdir /scan
 WORKDIR /scan
 
 ARG DBSDIR
-COPY run-cis-scan.sh $DBSDIR docker-bench-security/
+COPY container_utils/run-cis-scan.sh $DBSDIR docker-bench-security/
 
 ARG JSONDIFF
-COPY run-docker-diff.sh $JSONDIFF jsondiff/
+COPY container_utils/run-docker-diff.sh $JSONDIFF jsondiff/
 
 ARG JSON2CSV
-COPY csv-outline.json csv-docker-json.sh $JSON2CSV json2csv/
+COPY container_utils/csv-outline.json csv-docker-json.sh $JSON2CSV json2csv/
 
 ARG OPENSCAP
-COPY run-k8s-scan.sh $OPENSCAP/scap-content openscap/
+COPY container_utils/run-k8s-scan.sh $OPENSCAP/scap-content openscap/
 #RUN mkdir -p openscap/results
 COPY $OPENSCAP/scap-content/mirantis/cpe /usr/share/openscap/cpe
 
 ARG XCCDF2JSON
-COPY xccdf2json.sh $XCCDF2JSON xmlutils.py/
+COPY container_utils/xccdf2json.sh $XCCDF2JSON xmlutils.py/
 
-COPY run-scan.sh .
+COPY container_utils/run-scan.sh .
 
 ENTRYPOINT ["/scan/run-scan.sh"]
 CMD ["-dm"]
