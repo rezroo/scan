@@ -43,7 +43,7 @@ ARG JSONDIFF
 COPY container_utils/run-docker-diff.sh $JSONDIFF jsondiff/
 
 ARG JSON2CSV
-COPY container_utils/csv-outline.json csv-docker-json.sh $JSON2CSV json2csv/
+COPY container_utils/csv-outline.json container_utils/csv-docker-json.sh $JSON2CSV json2csv/
 
 ARG OPENSCAP
 COPY container_utils/run-k8s-scan.sh $OPENSCAP/scap-content openscap/
