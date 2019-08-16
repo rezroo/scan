@@ -1,0 +1,25 @@
+{
+  "collection": "rules",
+  "map": [
+    [
+      "idref",
+      "id"
+    ],
+    [
+      "check",
+      "check"
+    ],
+    [
+      "recommendation",
+      "recommendation"
+    ],
+    [
+      "justification",
+      "justification"
+    ],
+    [
+      "severity",
+      "severity"
+    ]
+  ]
+}
