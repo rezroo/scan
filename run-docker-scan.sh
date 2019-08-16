@@ -87,7 +87,6 @@ else
   )
 fi
 
-# TODO: make this `docker run` a function which can be used to also launch the debug process
 docker run "${DOCKER_ARGS[@]}"
 
 if [ ${DEBUG+x} ]; then
