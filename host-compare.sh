@@ -123,11 +123,11 @@ function _run_k8s_scan() {
   res=$?
   cd -
 
-  fail_if_error $res "k8s host scan"
+  #fail_if_error $res "k8s host scan"
 
   # run container stuff
- ./run-docker-scan.sh -R $HN -kxb -l /scan/results/k8s/${HOSTNAME}.xml
-  fail_if_error $? "k8s container scan"
+  ./run-docker-scan.sh -R $HN -kxb -l /scan/results/k8s/${HOSTNAME}.xml
+  #fail_if_error $? "k8s container scan"
 }
 
 

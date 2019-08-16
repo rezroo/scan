@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 #docker build --no-cache -t rezroo/docker-bench-security:1.0 .
 
-while getopts ":R:T:dmnkxb" opt; do
+while getopts ":R:T:Ddmnkxb" opt; do
     case "${opt}" in
         R)
             ResDir=$(pwd)/${OPTARG}
@@ -9,6 +9,10 @@ while getopts ":R:T:dmnkxb" opt; do
             ;;
         T)
             ImgTag=${OPTARG}
+            oindex=$((OPTIND-1))
+            ;;
+        D)
+            DEBUG=1
             oindex=$((OPTIND-1))
             ;;
         [dmnkxb]) # if caller provides command options then don't add
@@ -52,8 +56,7 @@ fi
 
 CNAME=security-scan.${hn}
 
-# TODO: make this `docker run` a function which can be used to also launch the debug process
-docker run -it --net host --pid host --userns host --cap-add audit_control \
+DOCKER_ARGS=(-t --net host --pid host --userns host --cap-add audit_control \
     -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
     -e TESTUID=$TESTUID -e TESTGID=$TESTGID \
     -v /etc:/etc:ro \
@@ -62,11 +65,37 @@ docker run -it --net host --pid host --userns host --cap-add audit_control \
     -v /usr/lib/systemd:/usr/lib/systemd:ro \
     -v /var/lib:/var/lib:ro \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
-    -v ${ResDir}:/scan/results \
     --label docker_bench_security \
+)
+
+if [ ${DEBUG+x} ]; then
+  CNAME=dbg-sec-scan
+  docker rm -f ${CNAME} | true
+
+  DOCKER_ARGS+=(-d \
+    -v $(pwd)/dbg-scan:/scan/results \
+    -v $(pwd):/root/src \
+    --name ${CNAME} \
+    --entrypoint "/bin/sh" \
+    rezroo/security-scan:debian -c "sleep 3600"
+  )
+else
+  DOCKER_ARGS+=(-i \
+    -v ${ResDir}:/scan/results \
     --name ${CNAME} \
     rezroo/security-scan:${ImgTag} $CMDArgs $@
+  )
+fi
+
+# TODO: make this `docker run` a function which can be used to also launch the debug process
+docker run "${DOCKER_ARGS[@]}"
+
+if [ ${DEBUG+x} ]; then
+  docker exec -it dbg-sec-scan bash
+fi
 
 docker logs --details ${CNAME} > ${ResDir}/${hn}-scan.out
 
-docker rm ${CNAME}
+if [ -z ${DEBUG+x} ]; then
+  docker rm ${CNAME}
+fi
