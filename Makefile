@@ -40,9 +40,7 @@ runquicktest:
 	./run-docker-scan.sh -R testscan -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files
 
 rundebugsession:
-	docker rm -f dbg-sec-scan | true
-	./dbg-sec-scan.sh
-	docker exec -it dbg-sec-scan bash
+	./run-docker-scan.sh -D
 
 runk8sscan:
 	./run-docker-scan.sh -R testscan -k -l /scan/results/docker/${Host}.log
