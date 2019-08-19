@@ -83,7 +83,7 @@ fi
 
 if [ ! -z ${DockerCSV+x} ]; then
   cd /scan/json2csv
-  ./gen-csv-reports.sh $logfile
+  ./docker-csv-reports.sh $logfile
 fi
 
 if [ ! -z ${K8SSCAN+x} ]; then
