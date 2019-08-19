@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
 
+if [ -z "$1" ]; then
+   logfile=/scan/results/k8s/${HOSTNAME}.json
+else
+   logfile=${1}
+fi
+
+CSV_DIR=$(dirname $logfile)/k8s_csv
+
+if [ ! -d ${CSV_DIR} ]; then
+  mkdir -p $CSV_DIR
+fi
+
 # Sample jq commands to get partial data out:
-# jq ".results" auk57r03o001-k8s-worker-13.json
-# jq ".profile" auk57r03o001-k8s-worker-13.json
-# jq ".rules" auk57r03o001-k8s-worker-13.json
-# jq ".rules[].id" auk57r03o001-k8s-worker-13.json
-# jq ".profiles" auk57r03o001-k8s-worker-13.json
+# jq ".results" hostname-k8s-worker-13.json
+# jq ".profile" hostname-k8s-worker-13.json
+# jq ".rules" hostname-k8s-worker-13.json
+# jq ".rules[].id" hostname--k8s-worker-13.json
+# jq ".profiles" hostname-k8s-worker-13.json
 
 gencsv()
 {
-    script=$1
-    input=$2
-    python ${script}/json2csv.py -o ${input}-1.csv ${input}.json ${script}/outline.result.txt
-    python ${script}/json2csv.py -o ${input}-2.csv ${input}.json ${script}/outline.rule.txt
+    log_json=$1
+    python ./json2csv.py -o ${CSV_DIR}/scan-1.csv $log_json ./k8s-outline.result.txt
+    python ./json2csv.py -o ${CSV_DIR}/scan-2.csv $log_json ./k8s-outline.rule.txt
 }
 
-gencsv ~/NC-June24/JSON/json2csv ~/NC-June24/2019-6-20/json/auk57r03o001-k8s-worker-13
-gencsv ~/NC-June24/JSON/json2csv ~/NC-June24/2019-6-20/json/auk57r03o001-k8s-master-13
+gencsv $logfile

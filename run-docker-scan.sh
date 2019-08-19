@@ -15,7 +15,7 @@ while getopts ":R:T:Ddmnkxb" opt; do
             DEBUG=1
             oindex=$((OPTIND-1))
             ;;
-        [dmnkxb]) # if caller provides command options then don't add
+        [dmnkxbo]) # if caller provides command options then don't add
                # default running option of -dn
             HasOptions=1
             ;;
