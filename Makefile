@@ -48,6 +48,9 @@ runk8sscan:
 makek8sjson:
 	./run-docker-scan.sh -R testscan -kx -l /scan/results/docker/${Host}.log
 
+makek8scsv:
+	./run-docker-scan.sh -kxo -l /scan/results/k8s/k8s-master.json
+
 # run the complete scan
 runallscans:
 	./run-docker-scan.sh -R $(Host) -dnkx -l /scan/results/docker/${Host}.log -c host_configuration,docker_daemon_configuration,docker_daemon_files,container_images,container_runtime,docker_security_operations

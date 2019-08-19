@@ -1,0 +1,21 @@
+{
+  "collection": "results",
+  "map": [
+    [
+      "idref",
+      "idref"
+    ],
+    [
+      "CIS",
+      "ident"
+    ],
+    [
+      "Result",
+      "result"
+    ],
+    [
+      "Severity",
+      "severity"
+    ]
+  ]
+}
