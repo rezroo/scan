@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ -z "$1" ]; then
    logfile=/scan/results/k8s/${HOSTNAME}.json
