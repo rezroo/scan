@@ -23,15 +23,15 @@ RUN \
 
 RUN apt-get install -y wget curl
 
-# install kubectl
-RUN apt-get install -y apt-transport-https ca-certificates \
-  && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -\
-  && echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list \
-  && apt-get update \
-  && apt-get -y install kubectl
+# JIC: install kubectl via apt. Right now we can just copy the local kubectl binary
+#RUN apt-get install -y apt-transport-https ca-certificates \
+#  && curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -\
+#  && echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list \
+#  && apt-get update \
+#  && apt-get -y install kubectl
 
 # DEBUG
-RUN apt-get install -y vim less git telnet
+#RUN apt-get install -y vim less git telnet
 
 RUN \
    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \

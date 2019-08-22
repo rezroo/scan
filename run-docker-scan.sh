@@ -77,7 +77,10 @@ if [ ${KUBE_CONFIG_DIR+x} ]; then
     echo "Could not find kube config dir at ${KUBE_CONFIG_DIR}!" >&2
     exit 1
   fi
-  DOCKER_ARGS+=(-v ${KUBE_CONFIG_DIR}:/root/.kube:ro)
+  kubectl_bin=$(which kubectl)
+  DOCKER_ARGS+=(-v ${KUBE_CONFIG_DIR}:/root/.kube:ro\
+    -v $kubectl_bin:/usr/local/bin/kubectl:ro
+  )
 fi
 
 if [ ${DEBUG+x} ]; then
