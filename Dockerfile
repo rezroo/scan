@@ -30,9 +30,6 @@ RUN apt-get install -y apt-transport-https ca-certificates \
   && apt-get update \
   && apt-get -y install kubectl
 
-# copy kube config
-COPY /root/.kube .kube 
-
 # DEBUG
 RUN apt-get install -y vim less git telnet
 
