@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 #docker build --no-cache -t rezroo/docker-bench-security:1.0 .
 
-while getopts ":R:T:Ddmnkxb" opt; do
+while getopts ":R:T:K:Ddmnkxb" opt; do
     case "${opt}" in
         R)
             ResDir=$(pwd)/${OPTARG}
@@ -13,6 +13,10 @@ while getopts ":R:T:Ddmnkxb" opt; do
             ;;
         D)
             DEBUG=1
+            oindex=$((OPTIND-1))
+            ;;
+        K)
+            KUBE_CONFIG_DIR=${OPTARG}
             oindex=$((OPTIND-1))
             ;;
         [dmnkxbo]) # if caller provides command options then don't add
@@ -67,6 +71,17 @@ DOCKER_ARGS=(-t --net host --pid host --userns host --cap-add audit_control \
     -v /var/run/docker.sock:/var/run/docker.sock:ro \
     --label docker_bench_security \
 )
+
+if [ ${KUBE_CONFIG_DIR+x} ]; then
+  if [ ! -d $KUBE_CONFIG_DIR ]; then
+    echo "Could not find kube config dir at ${KUBE_CONFIG_DIR}!" >&2
+    exit 1
+  fi
+  kubectl_bin=$(which kubectl)
+  DOCKER_ARGS+=(-v ${KUBE_CONFIG_DIR}:/root/.kube:ro\
+    -v $kubectl_bin:/usr/local/bin/kubectl:ro
+  )
+fi
 
 if [ ${DEBUG+x} ]; then
   CNAME=dbg-sec-scan

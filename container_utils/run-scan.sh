@@ -9,7 +9,10 @@ echo $@
 # /scan/openscap
 
 docker version
-#kubectl version
+
+if [ $(which kubectl) ]; then
+  kubectl version
+fi
 
 # Options for running various scans:
 # -d : run docker-bench-security
