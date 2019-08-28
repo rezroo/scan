@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 #docker build --no-cache -t rezroo/docker-bench-security:1.0 .
 
-while getopts ":R:T:K:Ddmnkxb" opt; do
+while getopts ":R:T:K:P:Ddmnkxb" opt; do
     case "${opt}" in
         R)
             ResDir=$(pwd)/${OPTARG}
@@ -18,6 +18,13 @@ while getopts ":R:T:K:Ddmnkxb" opt; do
         K)
             KUBE_CONFIG_DIR=${OPTARG}
             oindex=$((OPTIND-1))
+            ;;
+        P)
+            # directory of previous scans
+            # for performing diff
+            PREV_SCAN_DIR=${OPTARG}
+            oindex=$((OPTIND-1))
+            HasOptions=1
             ;;
         [dmnkxbo]) # if caller provides command options then don't add
                # default running option of -dn
@@ -81,6 +88,15 @@ if [ ${KUBE_CONFIG_DIR+x} ]; then
   DOCKER_ARGS+=(-v ${KUBE_CONFIG_DIR}:/root/.kube:ro\
     -v $kubectl_bin:/usr/local/bin/kubectl:ro
   )
+fi
+
+if [ ${PREV_SCAN_DIR+x} ]; then
+  if [ ! -d $PREV_SCAN_DIR ]; then
+    echo "Could not find previous scan dir at ${PREV_SCAN_DIR}!" >&2
+    exit 1
+  fi
+  DOCKER_ARGS+=(-v ${PREV_SCAN_DIR}:/scan/prev_results)
+  CMDArgs="${CMDArgs} -p"
 fi
 
 if [ ${DEBUG+x} ]; then

@@ -31,7 +31,7 @@ RUN apt-get install -y wget curl
 #  && apt-get -y install kubectl
 
 # DEBUG
-#RUN apt-get install -y vim less git telnet
+RUN apt-get install -y vim less git telnet
 
 RUN \
    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && \
@@ -45,7 +45,7 @@ ARG DBSDIR
 COPY container_utils/run-cis-scan.sh $DBSDIR docker-bench-security/
 
 ARG JSONDIFF
-COPY container_utils/run-docker-diff.sh $JSONDIFF jsondiff/
+COPY container_utils/run-docker-diff.sh container_utils/diff-all-json.sh $JSONDIFF jsondiff/
 
 ARG JSON2CSV
 COPY container_utils/docker-csv-reports.sh container_utils/k8s-csv-reports.sh $JSON2CSV json2csv/
