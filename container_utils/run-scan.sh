@@ -22,7 +22,7 @@ fi
 # -k : run k8s openscap scan
 # -u : run ubuntu openscap scan
 # -x : generate json from k8s xccdf files
-while getopts ":dmbnokxl:" opt; do
+while getopts ":dmbnopkxl:" opt; do
   case "${opt}" in
     d)
       DockerBench=1
@@ -50,6 +50,10 @@ while getopts ":dmbnokxl:" opt; do
       ;;
     o)
       K8SCSV=1
+      oindex=$((OPTIND-1))
+      ;;
+    p)
+      PrevCompare=1
       oindex=$((OPTIND-1))
       ;;
     l)
@@ -118,5 +122,12 @@ if [ ! -z ${KubeCompare+x} ]; then
   cd /scan/jsondiff
   ./run-docker-diff.sh $logfile /scan/results/host/k8s | tee /scan/results/diff-${HOSTNAME}-k8s.json
 fi
+
+if [ ! -z ${PrevCompare+x} ]; then
+  cd /scan/jsondiff
+  ./diff-all-json.sh /scan/results /scan/prev_results
+fi
+
+
 
 chown -R ${TESTUID}:${TESTGID} /scan/results
